@@ -17,11 +17,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...posts.docs.map(({ slug, updatedAt }) => (
       {
-        url: `${url}/en/${slug}`,
+        url: `${url}/roundup/${slug}`,
         lastModified: new Date(updatedAt),
         alternates: {
           languages: {
-            es: `${url}/es/${slug}`
+            es: `${url}/roundup/${slug}`
           }
         }
       }
