@@ -2,7 +2,11 @@ import type { NextConfig } from 'next'
 import { withPayload } from '@payloadcms/next/withPayload'
 
 const nextConfig: NextConfig = {
-  // experimental: { cpus: 1 },
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
+    ],
+  },
 }
 
 export default withPayload(nextConfig)
