@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { getPayloadClient } from '@/lib/payload'
+import { Tag } from '@/payload-types'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -96,18 +97,13 @@ export default async function PostPage({ params }: Props) {
 
             {tags.length > 0 && (
               <div className="tags">
-                {tags.map((tag) => {
-                  if (typeof tag === 'string') return null
-                  return (
-                    <Link
-                      key={tag.id}
-                      href={`/blog/tag/${tag.slug}`}
-                      className="tag-badge"
-                    >
+                {tags
+                  ?.filter((tag): tag is Tag => typeof tag === 'object')
+                  .map((tag) => (
+                    <Link key={tag.id} href={`/blog/tag/${tag.slug}`}>
                       #{tag.name}
                     </Link>
-                  )
-                })}
+                  ))}
               </div>
             )}
           </div>

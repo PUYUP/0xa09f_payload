@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getPayloadClient } from '@/lib/payload'
+import { Tag } from '@/payload-types'
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -59,18 +60,13 @@ export default async function BlogPage() {
 
                 {tags.length > 0 && (
                   <div className="tags">
-                    {tags.map((tag) => {
-                      if (typeof tag === 'string') return null
-                      return (
-                        <Link
-                          key={tag.id}
-                          href={`/blog/tag/${tag.slug}`}
-                          className="tag-badge"
-                        >
+                    {tags
+                      ?.filter((tag): tag is Tag => typeof tag === 'object')
+                      .map((tag) => (
+                        <Link key={tag.id} href={`/blog/tag/${tag.slug}`}>
                           #{tag.name}
                         </Link>
-                      )
-                    })}
+                      ))}
                   </div>
                 )}
               </div>
