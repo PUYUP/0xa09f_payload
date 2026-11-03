@@ -4,10 +4,10 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | 0xa09f Artificial from the dumper',
+    template: '%s | 0xa09f',
     default: '0xa09f Artificial from the dumper',
   },
-  description: 'Simple roundup powered by Payload CMS and Supabase PostgreSQL.',
+  description: 'Real opinions, experiences, and discoveries about AI tools, collected from people across the web.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
