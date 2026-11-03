@@ -1,8 +1,26 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, CollectionAfterChangeHook } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { revalidatePath } from 'next/cache'
+
+const revalidatePost: CollectionAfterChangeHook = ({ doc, previousDoc }) => {
+  if (doc.status === 'published') {
+    revalidatePath(`/roundup/${doc.slug}`)
+    revalidatePath('/roundup')
+  }
+
+  // kalau slug berubah atau post di-unpublish, buang cache slug lama
+  if (previousDoc?.slug && previousDoc.slug !== doc.slug) {
+    revalidatePath(`/roundup/${previousDoc.slug}`)
+  }
+
+  return doc
+}
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
+  hooks: {
+    afterChange: [revalidatePost],
+  },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'status', 'author', 'publishedAt', 'updatedAt'],
