@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build --webpack",
+    "build": "payload migrate && next build",
     "start": "next start",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
@@ -19,13 +19,14 @@
     "@payloadcms/db-postgres": "3.91.0",
     "@payloadcms/next": "3.91.0",
     "@payloadcms/richtext-lexical": "3.91.0",
+    "@payloadcms/storage-vercel-blob": "^3.91.0",
     "@payloadcms/ui": "3.91.0",
     "graphql": "^16.9.0",
     "next": "^16.3.3",
     "payload": "3.91.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sharp": "^0.33.0"
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

@@ -2,8 +2,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "0xpayload",
   "main": ".open-next/worker.js",
-  "compatibility_date": "2025-03-25",
+  "compatibility_date": "2025-09-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "upload_source_maps": true,
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
@@ -22,9 +23,6 @@
       "enabled": true,
       "head_sampling_rate": 1,
       "persist": true
-    },
-    "issue_detection": {
-      "enabled": true
     }
-  },
+  }
 }
