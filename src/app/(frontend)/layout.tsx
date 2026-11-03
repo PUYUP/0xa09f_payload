@@ -4,8 +4,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | 0xPayload Blog',
-    default: '0xPayload Blog',
+    template: '%s | 0xa09f Artificial from the dumper',
+    default: '0xa09f Artificial from the dumper',
   },
   description: 'Simple blog powered by Payload CMS and Supabase PostgreSQL.',
 }

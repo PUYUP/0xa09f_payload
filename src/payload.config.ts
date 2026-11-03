@@ -24,7 +24,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     meta: {
-      titleSuffix: '| 0xPayload Blog',
+      titleSuffix: '| 0xa09f Artificial from the dumper',
     },
   },
 
