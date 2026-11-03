@@ -185,6 +185,16 @@ export const Posts: CollectionConfig = {
         condition: (_, siblingData) => siblingData?.status === 'published',
       },
     },
+    {
+      name: 'language',
+      type: 'select',
+      defaultValue: 'en',
+      options: [
+        { label: 'English', value: 'en' },
+        { label: 'Indonesia', value: 'id' },
+      ],
+      admin: { position: 'sidebar' },
+    },
 
     // ── SEO (meta group) ─────────────────────────────────────────────────
     {

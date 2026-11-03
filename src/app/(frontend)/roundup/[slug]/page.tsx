@@ -97,7 +97,7 @@ export default async function PostPage({ params }: Props) {
         ← Back to Roundup
       </Link>
 
-      <article>
+      <article lang={post.language === 'id' ? 'id' : 'en'}>
         <header>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: 1.2, marginBottom: '1rem' }}>
             {post.title}

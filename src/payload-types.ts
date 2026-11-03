@@ -156,6 +156,7 @@ export interface Post {
   author?: (number | null) | User;
   status: 'draft' | 'published';
   publishedAt?: string | null;
+  language?: ('en' | 'id') | null;
   meta?: {
     /**
      * Defaults to post title if empty.
@@ -362,6 +363,7 @@ export interface PostsSelect<T extends boolean = true> {
   author?: T;
   status?: T;
   publishedAt?: T;
+  language?: T;
   meta?:
     | T
     | {
