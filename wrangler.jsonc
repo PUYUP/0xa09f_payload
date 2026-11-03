@@ -10,5 +10,21 @@
   },
   "vars": {
     "NEXT_PUBLIC_SERVER_URL": "https://0xa09f.com"
-  }
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true
+    },
+    "issue_detection": {
+      "enabled": true
+    }
+  },
 }
