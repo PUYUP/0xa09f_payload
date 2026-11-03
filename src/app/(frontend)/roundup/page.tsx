@@ -4,10 +4,10 @@ import { getPayloadClient } from '@/lib/payload'
 import { Tag } from '@/payload-types'
 
 export const metadata: Metadata = {
-  title: 'Blog',
+  title: 'Roundup',
 }
 
-export default async function BlogPage() {
+export default async function RoundupPage() {
   const payload = await getPayloadClient()
 
   const { docs: posts } = await payload.find({
@@ -22,16 +22,16 @@ export default async function BlogPage() {
   return (
     <main>
       <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem' }}>
-        Latest Articles
+        The Latest
       </h1>
 
       {posts.length === 0 && (
         <p style={{ color: 'var(--muted)' }}>
-          Belum ada artikel yang dipublikasikan. Masuk ke{' '}
+          No articles have been published. Log in to{' '}
           <Link href="/admin" style={{ textDecoration: 'underline' }}>
             Admin Panel
           </Link>{' '}
-          untuk membuat tulisan pertama!
+          to create your first article!
         </p>
       )}
 
@@ -41,7 +41,7 @@ export default async function BlogPage() {
 
           return (
             <li key={post.id} className="post-card">
-              <Link href={`/blog/${post.slug}`}>
+              <Link href={`/roundup/${post.slug}`}>
                 <h2 className="post-title">{post.title}</h2>
               </Link>
 
@@ -63,7 +63,7 @@ export default async function BlogPage() {
                     {tags
                       ?.filter((tag): tag is Tag => typeof tag === 'object')
                       .map((tag) => (
-                        <Link key={tag.id} href={`/blog/tag/${tag.slug}`}>
+                        <Link key={tag.id} href={`/roundup/tag/${tag.slug}`}>
                           #{tag.name}
                         </Link>
                       ))}

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     template: '%s | 0xa09f Artificial from the dumper',
     default: '0xa09f Artificial from the dumper',
   },
-  description: 'Simple blog powered by Payload CMS and Supabase PostgreSQL.',
+  description: 'Simple roundup powered by Payload CMS and Supabase PostgreSQL.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -16,14 +16,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div className="container">
           <header className="header">
-            <Link href="/blog" className="brand">
+            <Link href="/roundup" className="brand">
               0xA09F
             </Link>
             <nav className="nav-links">
-              <Link href="/blog">Blog</Link>
-              <Link href="/admin" target="_blank" rel="noopener noreferrer">
+              <Link href="/roundup">Roundup</Link>
+              {/* <Link href="/admin" target="_blank" rel="noopener noreferrer">
                 Admin Panel ↗
-              </Link>
+              </Link> */}
             </nav>
           </header>
           {children}

@@ -8,7 +8,7 @@ export const Posts: CollectionConfig = {
     defaultColumns: ['title', 'status', 'author', 'publishedAt', 'updatedAt'],
     preview: (doc) => {
       if (doc?.slug) {
-        return `${process.env.NEXT_PUBLIC_SERVER_URL}/blog/${doc.slug}`
+        return `${process.env.NEXT_PUBLIC_SERVER_URL}/roundup/${doc.slug}`
       }
       return null
     },

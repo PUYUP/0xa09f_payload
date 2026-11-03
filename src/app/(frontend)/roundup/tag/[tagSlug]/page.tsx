@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!tag) return {}
 
   return {
-    title: `Artikel dengan tag #${tag.name}`,
-    description: tag.description || `Semua artikel dengan tag #${tag.name}`,
+    title: `Articles with tag #${tag.name}`,
+    description: tag.description || `All articles with tag #${tag.name}`,
   }
 }
 
@@ -51,8 +51,8 @@ export default async function TagPage({ params }: Props) {
 
   return (
     <main>
-      <Link href="/blog" className="back-link">
-        ← Kembali ke Blog
+      <Link href="/roundup" className="back-link">
+        ← Back to Roundup
       </Link>
 
       <header style={{ marginBottom: '2rem' }}>
@@ -61,18 +61,18 @@ export default async function TagPage({ params }: Props) {
           <p style={{ color: 'var(--muted)', marginTop: '0.5rem' }}>{tag.description}</p>
         )}
         <p style={{ color: 'var(--muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-          {posts.length} artikel ditemukan
+          {posts.length} articles found
         </p>
       </header>
 
       {posts.length === 0 && (
-        <p style={{ color: 'var(--muted)' }}>Belum ada artikel dengan tag ini.</p>
+        <p style={{ color: 'var(--muted)' }}>No articles found with this tag.</p>
       )}
 
       <ul className="post-list">
         {posts.map((post) => (
           <li key={post.id} className="post-card">
-            <Link href={`/blog/${post.slug}`}>
+            <Link href={`/roundup/${post.slug}`}>
               <h2 className="post-title">{post.title}</h2>
             </Link>
             {post.excerpt && <p className="post-excerpt">{post.excerpt}</p>}

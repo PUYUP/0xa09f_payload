@@ -65,8 +65,8 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <main>
-      <Link href="/blog" className="back-link">
-        ← Kembali ke Blog
+      <Link href="/roundup" className="back-link">
+        ← Back to Roundup
       </Link>
 
       <article>
@@ -78,7 +78,7 @@ export default async function PostPage({ params }: Props) {
           <div className="meta-row" style={{ marginBottom: '1.5rem' }}>
             {author && (
               <span>
-                Ditulis oleh{' '}
+                Written by{' '}
                 <strong>
                   {author.firstName || ''} {author.lastName || ''}
                 </strong>
@@ -100,7 +100,7 @@ export default async function PostPage({ params }: Props) {
                 {tags
                   ?.filter((tag): tag is Tag => typeof tag === 'object')
                   .map((tag) => (
-                    <Link key={tag.id} href={`/blog/tag/${tag.slug}`}>
+                    <Link key={tag.id} href={`/roundup/tag/${tag.slug}`}>
                       #{tag.name}
                     </Link>
                   ))}
