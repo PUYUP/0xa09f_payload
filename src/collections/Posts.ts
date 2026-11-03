@@ -1,5 +1,5 @@
 import type { CollectionConfig, CollectionAfterChangeHook } from 'payload'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical'
 import { revalidatePath } from 'next/cache'
 
 const revalidatePost: CollectionAfterChangeHook = ({ doc, previousDoc }) => {
@@ -106,7 +106,31 @@ export const Posts: CollectionConfig = {
       label: 'Content',
       required: true,
       editor: lexicalEditor({
-        features: ({ defaultFeatures }) => [...defaultFeatures],
+        features: ({ defaultFeatures }) => [
+          // buang upload bawaan supaya tidak dobel
+          ...defaultFeatures.filter((f) => f.key !== 'upload'),
+          UploadFeature({
+            collections: {
+              media: {
+                fields: [
+                  {
+                    name: 'size',
+                    type: 'select',
+                    label: 'Ukuran',
+                    defaultValue: 'full',
+                    options: [
+                      { label: 'Kecil (400px)', value: 'small' },
+                      { label: 'Sedang (768px)', value: 'medium' },
+                      { label: 'Besar (1280px)', value: 'large' },
+                      { label: 'Penuh', value: 'full' },
+                    ],
+                  },
+                  { name: 'caption', type: 'text', label: 'Caption' },
+                ],
+              },
+            },
+          }),
+        ],
       }),
     },
 

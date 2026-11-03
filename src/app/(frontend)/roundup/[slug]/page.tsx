@@ -1,13 +1,41 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { RichText } from '@payloadcms/richtext-lexical/react'
+import { RichText, type JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 import { getPayloadClient } from '@/lib/payload'
 import { Tag } from '@/payload-types'
 
 type Props = {
   params: Promise<{ slug: string }>
 }
+
+const widths = { small: 400, medium: 768, large: 1280, full: 1280 } as const
+
+const jsxConverters: JSXConvertersFunction = ({ defaultConverters }) => ({
+  ...defaultConverters,
+  upload: ({ node }) => {
+    const media = node.value as any
+    if (!media || typeof media !== 'object' || !media.url) return null
+
+    const size = (node.fields?.size ?? 'full') as keyof typeof widths
+    const w = widths[size]
+    const h = Math.round(w * ((media.height ?? 9) / (media.width ?? 16)))
+
+    return (
+      <figure style={{ maxWidth: size === 'full' ? '100%' : w, margin: '1.5rem auto' }}>
+        <Image
+          src={media.url}
+          alt={media.alt ?? ''}
+          width={w}
+          height={h}
+          style={{ width: '100%', height: 'auto' }}
+        />
+        {node.fields?.caption && <figcaption>{node.fields.caption}</figcaption>}
+      </figure>
+    )
+  },
+})
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
@@ -111,7 +139,7 @@ export default async function PostPage({ params }: Props) {
 
         {post.content && (
           <div className="article-content">
-            <RichText data={post.content as any} />
+            <RichText data={post.content as any} converters={jsxConverters} />
           </div>
         )}
       </article>
