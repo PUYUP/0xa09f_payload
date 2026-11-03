@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="container">
           <header className="header">
             <Link href="/blog" className="brand">
-              0xPayload
+              0xA09F
             </Link>
             <nav className="nav-links">
               <Link href="/blog">Blog</Link>
