@@ -15,6 +15,7 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview"
   },
   "dependencies": {
+    "@next/third-parties": "^16.4.4",
     "@opennextjs/cloudflare": "^1.20.15",
     "@payloadcms/db-postgres": "3.91.0",
     "@payloadcms/next": "3.91.0",
