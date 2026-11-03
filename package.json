@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "payload migrate && next build",
+    "build": "next build",
     "start": "next start",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
