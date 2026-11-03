@@ -4,7 +4,7 @@ import { getPayloadClient } from '@/lib/payload'
 import { Tag } from '@/payload-types'
 
 export const metadata: Metadata = {
-  title: 'Roundup',
+  title: 'Digging through the noise to uncover what people actually think about AI',
 }
 
 export default async function RoundupPage() {
