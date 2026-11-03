@@ -56,6 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: metaTitle,
     description: metaDesc,
+    openGraph: { locale: post.language === 'id' ? 'id_ID' : 'en_US' }
   }
 }
 
@@ -97,7 +98,7 @@ export default async function PostPage({ params }: Props) {
         ← Back to Roundup
       </Link>
 
-      <article lang={post.language === 'id' ? 'id' : 'en'}>
+      <article lang={post.language === 'id' ? 'id_ID' : 'en_US'}>
         <header>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: 1.2, marginBottom: '1rem' }}>
             {post.title}
