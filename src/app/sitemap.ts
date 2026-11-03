@@ -3,6 +3,9 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { getServerSideURL } from '@/utilities/getURL'
 
+export const dynamic = 'force-dynamic' // Force Next.js re-evaluate sitemap on request
+export const revalidate = 0            // Disable revalidation cache
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const payload = await getPayload({ config })
   
