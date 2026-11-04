@@ -13,35 +13,39 @@ interface ReviewStats {
   latestReviewedAt: string | null
 }
 
-async function getReviewStats(payload: any, toolId: string): Promise<ReviewStats> {
+async function getReviewStats(payload: any, toolId: string | number): Promise<ReviewStats> {
   try {
-    const { docs: reviews } = await payload.find({
+    const { docs: reviews, totalDocs } = await payload.find({
       collection: 'reviews',
       where: {
-        'subject.value': { equals: toolId },
+        and: [
+          { 'subject.relationTo': { equals: 'tools' } },
+          { 'subject.value': { equals: toolId } },
+        ],
       },
-      limit: 100,
+      pagination: false, // ambil semua, tidak dibatasi 100
+      depth: 0,
     })
 
-    if (reviews.length === 0) {
+    if (totalDocs === 0) {
       return { count: 0, averageScore: 0, latestReviewedAt: null }
     }
 
     const impactScores: Record<string, number> = { low: 1, medium: 2, high: 3 }
-    const totalScore = reviews.reduce((sum: number, review: any) => {
-      return sum + (impactScores[review.impact] || 0)
-    }, 0)
+    const totalScore = reviews.reduce(
+      (sum: number, review: any) => sum + (impactScores[review.impact] || 0),
+      0,
+    )
 
-    const averageScore = totalScore / reviews.length
-
-    const latestReviewedAt = reviews
-      .map((r: any) => r.verifiedAt || r.createdAt)
-      .filter((d: string) => d)
-      .sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime())[0] || null
+    const latestReviewedAt =
+      reviews
+        .map((r: any) => r.verifiedAt || r.createdAt)
+        .filter(Boolean)
+        .sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime())[0] || null
 
     return {
-      count: reviews.length,
-      averageScore,
+      count: totalDocs,
+      averageScore: totalScore / reviews.length,
       latestReviewedAt,
     }
   } catch (error) {
@@ -65,7 +69,7 @@ export default async function ToolsPage() {
   const toolsWithStats = await Promise.all(
     tools.map(async (tool) => ({
       ...tool,
-      reviewStats: await getReviewStats(payload, String(tool.id)),
+      reviewStats: await getReviewStats(payload, tool.id),
     }))
   )
 

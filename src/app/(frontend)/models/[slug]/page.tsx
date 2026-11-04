@@ -118,36 +118,49 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
         </div>
       )}
 
-      {model.apiPricing && (
-        <div style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>API Pricing</h2>
-          <div
-            style={{
-              border: '1px solid var(--border)',
-              borderRadius: '8px',
-              padding: '1.5rem',
-              background: 'var(--card-bg)',
-            }}
-          >
-            <div style={{ marginBottom: '1rem' }}>
-              <strong>Input:</strong>{' '}
-              <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent)' }}>
-                {model.apiPricing.currency === 'IDR' ? 'Rp' : '$'}
-                {model.apiPricing.inputPer1M?.toLocaleString() || 'N/A'}
-              </span>{' '}
-              / 1M tokens
-            </div>
-            <div>
-              <strong>Output:</strong>{' '}
-              <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent)' }}>
-                {model.apiPricing.currency === 'IDR' ? 'Rp' : '$'}
-                {model.apiPricing.outputPer1M?.toLocaleString() || 'N/A'}
-              </span>{' '}
-              / 1M tokens
+      {(() => {
+        const pricing = model.apiPricing
+        const hasInput = pricing?.inputPer1M != null
+        const hasOutput = pricing?.outputPer1M != null
+        if (!hasInput && !hasOutput) return null
+
+        const symbol = pricing?.currency === 'IDR' ? 'Rp' : '$'
+
+        return (
+          <div style={{ marginBottom: '2rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>API Pricing</h2>
+            <div
+              style={{
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                padding: '1.5rem',
+                background: 'var(--card-bg)',
+              }}
+            >
+              {hasInput && (
+                <div style={{ marginBottom: hasOutput ? '1rem' : 0 }}>
+                  <strong>Input:</strong>{' '}
+                  <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent)' }}>
+                    {symbol}
+                    {pricing!.inputPer1M!.toLocaleString()}
+                  </span>{' '}
+                  / 1M tokens
+                </div>
+              )}
+              {hasOutput && (
+                <div>
+                  <strong>Output:</strong>{' '}
+                  <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent)' }}>
+                    {symbol}
+                    {pricing!.outputPer1M!.toLocaleString()}
+                  </span>{' '}
+                  / 1M tokens
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      )}
+        )
+      })()}
 
       {model.pros && Array.isArray(model.pros.docs) && model.pros.docs.length > 0 && (
         <div style={{ marginBottom: '1rem' }}>

@@ -12,35 +12,39 @@ interface ReviewStats {
   latestReviewedAt: string | null
 }
 
-async function getReviewStats(payload: any, modelId: string): Promise<ReviewStats> {
+async function getReviewStats(payload: any, modelId: string | number): Promise<ReviewStats> {
   try {
-    const { docs: reviews } = await payload.find({
+    const { docs: reviews, totalDocs } = await payload.find({
       collection: 'reviews',
       where: {
-        'subject.value': { equals: modelId },
+        and: [
+          { 'subject.relationTo': { equals: 'models' } },
+          { 'subject.value': { equals: modelId } },
+        ],
       },
-      limit: 100,
+      pagination: false, // ambil semua, tidak dibatasi 100
+      depth: 0,
     })
 
-    if (reviews.length === 0) {
+    if (totalDocs === 0) {
       return { count: 0, averageScore: 0, latestReviewedAt: null }
     }
 
     const impactScores: Record<string, number> = { low: 1, medium: 2, high: 3 }
-    const totalScore = reviews.reduce((sum: number, review: any) => {
-      return sum + (impactScores[review.impact] || 0)
-    }, 0)
+    const totalScore = reviews.reduce(
+      (sum: number, review: any) => sum + (impactScores[review.impact] || 0),
+      0,
+    )
 
-    const averageScore = totalScore / reviews.length
-
-    const latestReviewedAt = reviews
-      .map((r: any) => r.verifiedAt || r.createdAt)
-      .filter((d: string) => d)
-      .sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime())[0] || null
+    const latestReviewedAt =
+      reviews
+        .map((r: any) => r.verifiedAt || r.createdAt)
+        .filter(Boolean)
+        .sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime())[0] || null
 
     return {
-      count: reviews.length,
-      averageScore,
+      count: totalDocs,
+      averageScore: totalScore / reviews.length,
       latestReviewedAt,
     }
   } catch (error) {
@@ -61,7 +65,7 @@ export default async function ModelsPage() {
   const modelsWithStats = await Promise.all(
     models.map(async (model) => ({
       ...model,
-      reviewStats: await getReviewStats(payload, String(model.id)),
+      reviewStats: await getReviewStats(payload, model.id),
     }))
   )
 
@@ -143,14 +147,26 @@ export default async function ModelsPage() {
                 </div>
               )}
 
-              {model.apiPricing && (
-                <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--muted)' }}>
-                  API: {model.apiPricing.currency === 'IDR' ? 'Rp' : '$'}
-                  {model.apiPricing.inputPer1M?.toLocaleString() || 'N/A'} / 1M input,{' '}
-                  {model.apiPricing.currency === 'IDR' ? 'Rp' : '$'}
-                  {model.apiPricing.outputPer1M?.toLocaleString() || 'N/A'} / 1M output
-                </div>
-              )}
+              {(() => {
+                const pricing = model.apiPricing
+                const hasInput = pricing?.inputPer1M != null
+                const hasOutput = pricing?.outputPer1M != null
+                if (!hasInput && !hasOutput) return null
+
+                const symbol = pricing?.currency === 'IDR' ? 'Rp' : '$'
+
+                return (
+                  <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--muted)' }}>
+                    API:{' '}
+                    {[
+                      hasInput && `${symbol}${pricing!.inputPer1M!.toLocaleString()} / 1M input`,
+                      hasOutput && `${symbol}${pricing!.outputPer1M!.toLocaleString()} / 1M output`,
+                    ]
+                      .filter(Boolean)
+                      .join(', ')}
+                  </div>
+                )
+              })()}
             </li>
           )
         })}
