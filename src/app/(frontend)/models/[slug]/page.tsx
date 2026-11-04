@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!model) return { title: 'Model Not Found' }
 
   return {
-    title: `${model.name} - AI Model`,
+    title: `${model.name} - Review: Real User Reviews & Experiences Across The Internet`,
     description: model.description?.substring(0, 160),
   }
 }

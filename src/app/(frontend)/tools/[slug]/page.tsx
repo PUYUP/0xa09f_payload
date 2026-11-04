@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!tool) return { title: 'Tool Not Found' }
 
   return {
-    title: `${tool.name} - AI Tool`,
+    title: `${tool.name} - Review: Real User Reviews & Experiences Across The Internet`,
     description: tool.tagline || '',
   }
 }
