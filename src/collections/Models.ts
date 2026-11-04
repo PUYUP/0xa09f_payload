@@ -17,7 +17,7 @@ const revalidateModel: CollectionAfterChangeHook = ({ doc, previousDoc }) => {
   return doc
 }
 
-// Model AI (GPT, Gemini, Claude, dst.) yang dipakai oleh tools.
+// AI models (GPT, Gemini, Claude, etc.) used by tools.
 export const Models: CollectionConfig = {
   hooks: {
     afterChange: [revalidateModel],
@@ -28,26 +28,26 @@ export const Models: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'family', 'releaseDate'],
     listSearchableFields: ['name', 'family'],
-    group: 'Katalog',
+    group: 'Catalog',
   },
   fields: [
-    { name: 'name', type: 'text', required: true, index: true, admin: { description: 'Nama versi, mis. "GPT-5" atau "Gemini 3 Pro".' } },
+    { name: 'name', type: 'text', required: true, index: true, admin: { description: 'Version name, e.g. "GPT-5" or "Gemini 3 Pro".' } },
     slugField('name'),
-    { name: 'family', type: 'text', index: true, admin: { description: 'Rumpun model, mis. GPT, Gemini, Claude.' } },
+    { name: 'family', type: 'text', index: true, admin: { description: 'Model family, e.g. GPT, Gemini, Claude.' } },
     { name: 'description', type: 'textarea' },
     {
       name: 'modalities',
       type: 'select',
       hasMany: true,
       options: [
-        { label: 'Teks', value: 'text' },
-        { label: 'Gambar', value: 'image' },
+        { label: 'Text', value: 'text' },
+        { label: 'Image', value: 'image' },
         { label: 'Audio', value: 'audio' },
         { label: 'Video', value: 'video' },
-        { label: 'Kode', value: 'code' },
+        { label: 'Code', value: 'code' },
       ],
     },
-    { name: 'contextWindow', type: 'number', min: 0, admin: { description: 'Dalam token.' } },
+    { name: 'contextWindow', type: 'number', min: 0, admin: { description: 'In tokens.' } },
     { name: 'maxOutputTokens', type: 'number', min: 0 },
     { name: 'isOpenWeights', type: 'checkbox', defaultValue: false },
     { name: 'releaseDate', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' } } },
@@ -55,14 +55,14 @@ export const Models: CollectionConfig = {
     {
       name: 'apiPricing',
       type: 'group',
-      admin: { description: 'Harga API per 1 juta token (opsional).' },
+      admin: { description: 'API pricing per 1 million tokens (optional).' },
       fields: [
         { name: 'inputPer1M', type: 'number', min: 0 },
         { name: 'outputPer1M', type: 'number', min: 0 },
         { name: 'currency', type: 'select', defaultValue: 'USD', options: ['USD', 'IDR'] },
       ],
     },
-    // Field virtual: daftar tools yang mendukung model ini (dari `tools.models`).
+    // Virtual field: list of tools that support this model (from `tools.models`).
     { name: 'tools', type: 'join', collection: 'tools', on: 'models' },
     ...reviewJoins(),
   ],

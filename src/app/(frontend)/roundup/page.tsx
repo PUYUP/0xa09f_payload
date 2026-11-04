@@ -4,7 +4,7 @@ import { getPayloadClient } from '@/lib/payload'
 import { Tag } from '@/payload-types'
 
 export const metadata: Metadata = {
-  title: 'Digging through the noise to uncover what people actually think about AI',
+  title: 'AI Roundup - Weekly Newsletter & Insights',
 }
 
 export default async function RoundupPage() {
@@ -22,7 +22,7 @@ export default async function RoundupPage() {
   return (
     <main>
       <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem' }}>
-        The Latest
+        AI Community Roundup
       </h1>
 
       {posts.length === 0 && (
@@ -50,10 +50,10 @@ export default async function RoundupPage() {
               <div className="meta-row">
                 {post.publishedAt && (
                   <time dateTime={post.publishedAt}>
-                    {new Date(post.publishedAt).toLocaleDateString('id-ID', {
-                      day: 'numeric',
-                      month: 'long',
+                    {new Date(post.publishedAt).toLocaleDateString('en-US', {
                       year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
                     })}
                   </time>
                 )}

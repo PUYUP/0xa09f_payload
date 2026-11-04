@@ -1,11 +1,11 @@
 import type { Field } from 'payload'
 
-// Daftar collection yang boleh diulas (pros/cons).
-// Menambah entitas baru (mis. 'models') cukup menambahkan slug di sini,
-// lalu menyisipkan `...reviewJoins()` ke fields collection tersebut.
+// List of collections that can be reviewed (pros/cons).
+// To add a new entity (e.g. 'models'), just add the slug here,
+// then insert `...reviewJoins()` into that collection's fields.
 export const REVIEWABLE_SLUGS = ['tools', 'models'] as const
 
-// Field virtual `pros` & `cons`: menarik data dari `reviews` lewat relasi `subject`.
+// Virtual fields `pros` & `cons`: pull data from `reviews` via `subject` relationship.
 export const reviewJoins = (): Field[] => [
   {
     name: 'pros',

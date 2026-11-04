@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getPayloadClient } from '@/lib/payload'
 
 export const metadata: Metadata = {
-  title: 'AI Models Directory - AI Models Catalog',
+  title: 'AI Models Reviews - Community Ratings & Feedback',
 }
 
 interface ReviewStats {
@@ -61,14 +61,14 @@ export default async function ModelsPage() {
   const modelsWithStats = await Promise.all(
     models.map(async (model) => ({
       ...model,
-      reviewStats: await getReviewStats(payload, model.id),
+      reviewStats: await getReviewStats(payload, String(model.id)),
     }))
   )
 
   return (
     <main>
       <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem' }}>
-        AI Models Directory
+        AI Models - Community Ratings & Feedback
       </h1>
 
       {modelsWithStats.length === 0 && (
@@ -118,10 +118,10 @@ export default async function ModelsPage() {
 
                 {model.releaseDate && (
                   <time dateTime={model.releaseDate}>
-                    {new Date(model.releaseDate).toLocaleDateString('id-ID', {
-                      day: 'numeric',
-                      month: 'long',
+                    {new Date(model.releaseDate).toLocaleDateString('en-US', {
                       year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
                     })}
                   </time>
                 )}
@@ -137,7 +137,7 @@ export default async function ModelsPage() {
                   </span>
                   {model.reviewStats.latestReviewedAt && (
                     <span>
-                      Latest: {new Date(model.reviewStats.latestReviewedAt).toLocaleDateString('id-ID')}
+                      Latest: {new Date(model.reviewStats.latestReviewedAt).toLocaleDateString('en-US')}
                     </span>
                   )}
                 </div>

@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   return {
     title: `${tool.name} - AI Tool`,
-    description: tool.tagline || tool.description?.substring(0, 160),
+    description: tool.tagline || '',
   }
 }
 
@@ -127,50 +127,52 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
         </div>
       )}
 
-      <div style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Specifications</h2>
-        <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-          {tool.website && (
-            <div>
-              <strong>Website:</strong>{' '}
-              <a href={tool.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
-                {tool.website}
-              </a>
-            </div>
-          )}
-          {tool.docsUrl && (
-            <div>
-              <strong>Documentation:</strong>{' '}
-              <a href={tool.docsUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
-                {tool.docsUrl}
-              </a>
-            </div>
-          )}
-          {tool.repoUrl && (
-            <div>
-              <strong>Repository:</strong>{' '}
-              <a href={tool.repoUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
-                {tool.repoUrl}
-              </a>
-            </div>
-          )}
-          {tool.releaseDate && (
-            <div>
-              <strong>Release Date:</strong>{' '}
-              {new Date(tool.releaseDate).toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })}
-            </div>
-          )}
-          {tool.platforms && tool.platforms.length > 0 && (
-            <div>
-              <strong>Platforms:</strong> {tool.platforms.join(', ')}
-            </div>
-          )}
+      {(tool.website || tool.docsUrl || tool.repoUrl || tool.releaseDate || (tool.platforms && tool.platforms.length > 0)) && (
+        <div style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Specifications</h2>
+          <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            {tool.website && (
+              <div>
+                <strong>Website:</strong>{' '}
+                <a href={tool.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
+                  {tool.website}
+                </a>
+              </div>
+            )}
+            {tool.docsUrl && (
+              <div>
+                <strong>Documentation:</strong>{' '}
+                <a href={tool.docsUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
+                  {tool.docsUrl}
+                </a>
+              </div>
+            )}
+            {tool.repoUrl && (
+              <div>
+                <strong>Repository:</strong>{' '}
+                <a href={tool.repoUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
+                  {tool.repoUrl}
+                </a>
+              </div>
+            )}
+            {tool.releaseDate && (
+              <div>
+                <strong>Release Date:</strong>{' '}
+                {new Date(tool.releaseDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </div>
+            )}
+            {tool.platforms && tool.platforms.length > 0 && (
+              <div>
+                <strong>Platforms:</strong> {tool.platforms.join(', ')}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {models.length > 0 && (
         <div style={{ marginBottom: '2rem' }}>
@@ -206,7 +208,7 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                   <div style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
                     {plan.currency === 'IDR' ? 'Rp' : '$'}{plan.price}
                     <span style={{ fontSize: '0.875rem', fontWeight: 400, color: 'var(--muted)' }}>
-                      /{plan.billingPeriod === 'month' ? 'month' : plan.billingPeriod === 'year' ? 'year' : plan.billingPeriod === 'once' ? 'once' : 'usage'}
+                      /{plan.billingPeriod === 'month' ? 'month' : plan.billingPeriod === 'year' ? 'year' : plan.billingPeriod === 'once' ? 'one-time' : 'usage-based'}
                     </span>
                   </div>
                 ) : (
@@ -227,15 +229,15 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
         </div>
       )}
 
-      {tool.pros && tool.pros.length > 0 && (
+      {tool.pros && Array.isArray(tool.pros.docs) && tool.pros.docs.length > 0 && (
         <div style={{ marginBottom: '1rem' }}>
           <div className="meta-row">
             <span>
-              <strong>{tool.pros.length}</strong> pros
+              <strong>{tool.pros.docs.length}</strong> pros
             </span>
-            {tool.cons && tool.cons.length > 0 && (
+            {tool.cons && Array.isArray(tool.cons.docs) && tool.cons.docs.length > 0 && (
               <span>
-                <strong>{tool.cons.length}</strong> cons
+                <strong>{tool.cons.docs.length}</strong> cons
               </span>
             )}
           </div>
@@ -260,13 +262,13 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
       <div className="review-section">
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Reviews</h2>
 
-        {tool.pros && tool.pros.length > 0 && (
+        {tool.pros && Array.isArray(tool.pros.docs) && tool.pros.docs.length > 0 && (
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#10b981' }}>
-              Pros (Kelebihan)
+              Pros (Strengths)
             </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {tool.pros.map((review: any) => (
+              {tool.pros.docs.map((review: any) => (
                 <li key={review.id} className="review-card">
                   <div className="review-header">
                     <strong style={{ fontSize: '1rem' }}>{review.title}</strong>
@@ -287,7 +289,7 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                   )}
                   {review.verifiedAt && (
                     <div className="review-verified">
-                      Verified: {new Date(review.verifiedAt).toLocaleDateString('id-ID')}
+                      Verified: {new Date(review.verifiedAt).toLocaleDateString('en-US')}
                     </div>
                   )}
                 </li>
@@ -296,13 +298,13 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
           </div>
         )}
 
-        {tool.cons && tool.cons.length > 0 && (
+        {tool.cons && Array.isArray(tool.cons.docs) && tool.cons.docs.length > 0 && (
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#ef4444' }}>
-              Cons (Kekurangan)
+              Cons (Weaknesses)
             </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {tool.cons.map((review: any) => (
+              {tool.cons.docs.map((review: any) => (
                 <li key={review.id} className="review-card">
                   <div className="review-header">
                     <strong style={{ fontSize: '1rem' }}>{review.title}</strong>
@@ -323,7 +325,7 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                   )}
                   {review.verifiedAt && (
                     <div className="review-verified">
-                      Verified: {new Date(review.verifiedAt).toLocaleDateString('id-ID')}
+                      Verified: {new Date(review.verifiedAt).toLocaleDateString('en-US')}
                     </div>
                   )}
                 </li>
@@ -332,7 +334,7 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
           </div>
         )}
 
-        {!tool.pros?.length && !tool.cons?.length && (
+        {(!tool.pros?.docs?.length || tool.pros.docs.length === 0) && (!tool.cons?.docs?.length || tool.cons.docs.length === 0) && (
           <p style={{ color: 'var(--muted)' }}>No reviews yet.</p>
         )}
       </div>

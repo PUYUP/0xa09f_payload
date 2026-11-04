@@ -6,7 +6,7 @@ export const Media: CollectionConfig = {
     read: () => true,
   },
   upload: {
-    // tanpa staticDir: penyimpanan ditangani plugin Vercel Blob
+    // without staticDir: storage handled by Vercel Blob plugin
     crop: true,
     focalPoint: true,
     imageSizes: [

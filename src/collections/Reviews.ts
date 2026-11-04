@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { isAdmin, publicRead } from './access'
 import { REVIEWABLE_SLUGS } from '@/fields/reviewable'
 
-// Satu baris = satu poin kelebihan (pros) ATAU kekurangan (cons) dari sebuah objek (`subject`).
+// One row = one pros OR cons point of an object (`subject`).
 export const Reviews: CollectionConfig = {
   slug: 'reviews',
   access: { read: publicRead, create: isAdmin, update: isAdmin, delete: isAdmin },
@@ -10,18 +10,18 @@ export const Reviews: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'subject', 'type', 'impact', 'order'],
     listSearchableFields: ['title', 'content'],
-    group: 'Konten',
+    group: 'Content',
   },
   defaultSort: 'order',
   fields: [
     {
-      // Polimorfik: bisa menunjuk ke tool, company, atau collection lain di REVIEWABLE_SLUGS.
+      // Polymorphic: can point to tool, company, or other collection in REVIEWABLE_SLUGS.
       name: 'subject',
       type: 'relationship',
       relationTo: [...REVIEWABLE_SLUGS],
       required: true,
       index: true,
-      admin: { description: 'Objek yang diulas (tool, perusahaan, dst.).' },
+      admin: { description: 'Object being reviewed (tool, company, etc.).' },
     },
     {
       name: 'type',
@@ -29,28 +29,28 @@ export const Reviews: CollectionConfig = {
       required: true,
       index: true,
       options: [
-        { label: 'Pros (Kelebihan)', value: 'pros' },
-        { label: 'Cons (Kekurangan)', value: 'cons' },
+        { label: 'Pros (Strengths)', value: 'pros' },
+        { label: 'Cons (Weaknesses)', value: 'cons' },
       ],
     },
-    { name: 'title', type: 'text', required: true, admin: { description: 'Ringkasan singkat satu kalimat.' } },
-    { name: 'content', type: 'textarea', admin: { description: 'Penjelasan detail (opsional).' } },
+    { name: 'title', type: 'text', required: true, admin: { description: 'One sentence summary.' } },
+    { name: 'content', type: 'textarea', admin: { description: 'Detailed explanation (optional).' } },
     {
       name: 'impact',
       type: 'select',
       defaultValue: 'medium',
       options: [
-        { label: 'Rendah', value: 'low' },
-        { label: 'Sedang', value: 'medium' },
-        { label: 'Tinggi', value: 'high' },
+        { label: 'Low', value: 'low' },
+        { label: 'Medium', value: 'medium' },
+        { label: 'High', value: 'high' },
       ],
-      admin: { description: 'Seberapa berpengaruh poin ini bagi pengguna.' },
+      admin: { description: 'How impactful this point is for users.' },
     },
     { name: 'order', type: 'number', defaultValue: 0, admin: { position: 'sidebar' } },
     {
       name: 'sourceUrl',
       type: 'text',
-      admin: { position: 'sidebar', description: 'Sumber/bukti (dokumentasi, benchmark, dll).' },
+      admin: { position: 'sidebar', description: 'Source/evidence (documentation, benchmark, etc.).' },
     },
     {
       name: 'verifiedAt',

@@ -81,40 +81,42 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
         </div>
       )}
 
-      <div style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Specifications</h2>
-        <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-          {model.contextWindow && (
-            <div>
-              <strong>Context Window:</strong> {model.contextWindow.toLocaleString()} tokens
-            </div>
-          )}
-          {model.maxOutputTokens && (
-            <div>
-              <strong>Max Output Tokens:</strong> {model.maxOutputTokens.toLocaleString()}
-            </div>
-          )}
-          {model.releaseDate && (
-            <div>
-              <strong>Release Date:</strong>{' '}
-              {new Date(model.releaseDate).toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })}
-            </div>
-          )}
-          {model.knowledgeCutoff && (
-            <div>
-              <strong>Knowledge Cutoff:</strong>{' '}
-              {new Date(model.knowledgeCutoff).toLocaleDateString('id-ID', {
-                month: 'long',
-                year: 'numeric',
-              })}
-            </div>
-          )}
+      {(model.contextWindow || model.maxOutputTokens || model.releaseDate || model.knowledgeCutoff) && (
+        <div style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Specifications</h2>
+          <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            {model.contextWindow && (
+              <div>
+                <strong>Context Window:</strong> {model.contextWindow.toLocaleString()} tokens
+              </div>
+            )}
+            {model.maxOutputTokens && (
+              <div>
+                <strong>Max Output Tokens:</strong> {model.maxOutputTokens.toLocaleString()}
+              </div>
+            )}
+            {model.releaseDate && (
+              <div>
+                <strong>Release Date:</strong>{' '}
+                {new Date(model.releaseDate).toLocaleDateString('en-US', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })}
+              </div>
+            )}
+            {model.knowledgeCutoff && (
+              <div>
+                <strong>Knowledge Cutoff:</strong>{' '}
+                {new Date(model.knowledgeCutoff).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                })}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {model.apiPricing && (
         <div style={{ marginBottom: '2rem' }}>
@@ -147,15 +149,15 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
         </div>
       )}
 
-      {model.pros && model.pros.length > 0 && (
+      {model.pros && Array.isArray(model.pros.docs) && model.pros.docs.length > 0 && (
         <div style={{ marginBottom: '1rem' }}>
           <div className="meta-row">
             <span>
-              <strong>{model.pros.length}</strong> pros
+              <strong>{model.pros.docs.length}</strong> pros
             </span>
-            {model.cons && model.cons.length > 0 && (
+            {model.cons && Array.isArray(model.cons.docs) && model.cons.docs.length > 0 && (
               <span>
-                <strong>{model.cons.length}</strong> cons
+                <strong>{model.cons.docs.length}</strong> cons
               </span>
             )}
           </div>
@@ -185,13 +187,13 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
       <div className="review-section">
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Reviews</h2>
 
-        {model.pros && model.pros.length > 0 && (
+        {model.pros && Array.isArray(model.pros.docs) && model.pros.docs.length > 0 && (
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#10b981' }}>
-              Pros (Kelebihan)
+              Pros (Strengths)
             </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {model.pros.map((review: any) => (
+              {model.pros.docs.map((review: any) => (
                 <li key={review.id} className="review-card">
                   <div className="review-header">
                     <strong style={{ fontSize: '1rem' }}>{review.title}</strong>
@@ -212,7 +214,7 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
                   )}
                   {review.verifiedAt && (
                     <div className="review-verified">
-                      Verified: {new Date(review.verifiedAt).toLocaleDateString('id-ID')}
+                      Verified: {new Date(review.verifiedAt).toLocaleDateString('en-US')}
                     </div>
                   )}
                 </li>
@@ -221,13 +223,13 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
           </div>
         )}
 
-        {model.cons && model.cons.length > 0 && (
+        {model.cons && Array.isArray(model.cons.docs) && model.cons.docs.length > 0 && (
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#ef4444' }}>
-              Cons (Kekurangan)
+              Cons (Weaknesses)
             </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {model.cons.map((review: any) => (
+              {model.cons.docs.map((review: any) => (
                 <li key={review.id} className="review-card">
                   <div className="review-header">
                     <strong style={{ fontSize: '1rem' }}>{review.title}</strong>
@@ -248,7 +250,7 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
                   )}
                   {review.verifiedAt && (
                     <div className="review-verified">
-                      Verified: {new Date(review.verifiedAt).toLocaleDateString('id-ID')}
+                      Verified: {new Date(review.verifiedAt).toLocaleDateString('en-US')}
                     </div>
                   )}
                 </li>
@@ -257,7 +259,7 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
           </div>
         )}
 
-        {!model.pros?.length && !model.cons?.length && (
+        {(!model.pros?.docs?.length || model.pros.docs.length === 0) && (!model.cons?.docs?.length || model.cons.docs.length === 0) && (
           <p style={{ color: 'var(--muted)' }}>No reviews yet.</p>
         )}
       </div>

@@ -308,7 +308,7 @@ export interface Category {
 export interface Model {
   id: number;
   /**
-   * Nama versi, mis. "GPT-5" atau "Gemini 3 Pro".
+   * Version name, e.g. "GPT-5" or "Gemini 3 Pro".
    */
   name: string;
   /**
@@ -316,13 +316,13 @@ export interface Model {
    */
   slug: string;
   /**
-   * Rumpun model, mis. GPT, Gemini, Claude.
+   * Model family, e.g. GPT, Gemini, Claude.
    */
   family?: string | null;
   description?: string | null;
   modalities?: ('text' | 'image' | 'audio' | 'video' | 'code')[] | null;
   /**
-   * Dalam token.
+   * In tokens.
    */
   contextWindow?: number | null;
   maxOutputTokens?: number | null;
@@ -330,7 +330,7 @@ export interface Model {
   releaseDate?: string | null;
   knowledgeCutoff?: string | null;
   /**
-   * Harga API per 1 juta token (opsional).
+   * API pricing per 1 million tokens (optional).
    */
   apiPricing?: {
     inputPer1M?: number | null;
@@ -363,7 +363,7 @@ export interface Tool {
   id: number;
   name: string;
   /**
-   * Satu kalimat deskripsi.
+   * One sentence description.
    */
   tagline?: string | null;
   description?: {
@@ -389,7 +389,7 @@ export interface Tool {
   repoUrl?: string | null;
   platforms?: ('web' | 'desktop' | 'cli' | 'vscode' | 'jetbrains' | 'api')[] | null;
   /**
-   * Model AI yang didukung tool ini.
+   * AI models supported by this tool.
    */
   models?: (number | Model)[] | null;
   isOpenSource?: boolean | null;
@@ -399,7 +399,7 @@ export interface Tool {
     | {
         name: string;
         /**
-         * Kosongkan bila custom/enterprise.
+         * Leave empty for custom/enterprise.
          */
         price?: number | null;
         currency?: ('USD' | 'IDR') | null;
@@ -428,11 +428,11 @@ export interface Tool {
    */
   slug: string;
   /**
-   * Skor keseluruhan 0–10 (penilaian admin).
+   * Overall score 0–10 (admin rating).
    */
   overallScore?: number | null;
   /**
-   * Kesimpulan singkat.
+   * Brief conclusion.
    */
   verdict?: string | null;
   updatedAt: string;
@@ -446,7 +446,7 @@ export interface Tool {
 export interface Review {
   id: number;
   /**
-   * Objek yang diulas (tool, perusahaan, dst.).
+   * Object being reviewed (tool, company, etc.).
    */
   subject:
     | {
@@ -459,20 +459,20 @@ export interface Review {
       };
   type: 'pros' | 'cons';
   /**
-   * Ringkasan singkat satu kalimat.
+   * One sentence summary.
    */
   title: string;
   /**
-   * Penjelasan detail (opsional).
+   * Detailed explanation (optional).
    */
   content?: string | null;
   /**
-   * Seberapa berpengaruh poin ini bagi pengguna.
+   * How impactful this point is for users.
    */
   impact?: ('low' | 'medium' | 'high') | null;
   order?: number | null;
   /**
-   * Sumber/bukti (dokumentasi, benchmark, dll).
+   * Source/evidence (documentation, benchmark, etc.).
    */
   sourceUrl?: string | null;
   verifiedAt?: string | null;

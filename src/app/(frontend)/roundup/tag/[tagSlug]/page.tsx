@@ -79,10 +79,10 @@ export default async function TagPage({ params }: Props) {
             {post.publishedAt && (
               <div className="meta-row">
                 <time dateTime={post.publishedAt}>
-                  {new Date(post.publishedAt).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'long',
+                  {new Date(post.publishedAt).toLocaleDateString('en-US', {
                     year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
                   })}
                 </time>
               </div>

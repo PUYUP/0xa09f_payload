@@ -4,7 +4,7 @@ import { getPayloadClient } from '@/lib/payload'
 import { Category, Tag } from '@/payload-types'
 
 export const metadata: Metadata = {
-  title: 'Tools Directory - AI Tools Catalog',
+  title: 'AI Tools Reviews - Community Reviews & Ratings',
 }
 
 interface ReviewStats {
@@ -65,14 +65,14 @@ export default async function ToolsPage() {
   const toolsWithStats = await Promise.all(
     tools.map(async (tool) => ({
       ...tool,
-      reviewStats: await getReviewStats(payload, tool.id),
+      reviewStats: await getReviewStats(payload, String(tool.id)),
     }))
   )
 
   return (
     <main>
       <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem' }}>
-        AI Tools Directory
+        AI Tools - Community Reviews & Ratings
       </h1>
 
       {toolsWithStats.length === 0 && (
@@ -152,7 +152,7 @@ export default async function ToolsPage() {
                       </span>
                       {tool.reviewStats.latestReviewedAt && (
                         <span>
-                          Latest: {new Date(tool.reviewStats.latestReviewedAt).toLocaleDateString('id-ID')}
+                          Latest: {new Date(tool.reviewStats.latestReviewedAt).toLocaleDateString('en-US')}
                         </span>
                       )}
                     </div>
