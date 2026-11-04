@@ -9,6 +9,10 @@ import { Posts } from './collections/Posts'
 import { Tags } from './collections/Tags'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
+import { Models } from './collections/Models'
+import { Tools } from './collections/Tools'
+import { Reviews } from './collections/Reviews'
+import { Categories } from './collections/Categories'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 const filename = fileURLToPath(import.meta.url)
@@ -28,7 +32,7 @@ export default buildConfig({
     },
   },
 
-  collections: [Posts, Tags, Media, Users],
+  collections: [Posts, Tags, Media, Users, Categories, Models, Tools, Reviews],
 
   editor: lexicalEditor(),
 

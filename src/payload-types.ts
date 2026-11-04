@@ -71,17 +71,35 @@ export interface Config {
     tags: Tag;
     media: Media;
     users: User;
+    categories: Category;
+    models: Model;
+    tools: Tool;
+    reviews: Review;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    models: {
+      tools: 'tools';
+      pros: 'reviews';
+      cons: 'reviews';
+    };
+    tools: {
+      pros: 'reviews';
+      cons: 'reviews';
+    };
+  };
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    models: ModelsSelect<false> | ModelsSelect<true>;
+    tools: ToolsSelect<false> | ToolsSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -269,6 +287,200 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  name: string;
+  /**
+   * Otomatis dari nama, bisa diubah.
+   */
+  slug: string;
+  description?: string | null;
+  parent?: (number | null) | Category;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "models".
+ */
+export interface Model {
+  id: number;
+  /**
+   * Nama versi, mis. "GPT-5" atau "Gemini 3 Pro".
+   */
+  name: string;
+  /**
+   * Otomatis dari nama, bisa diubah.
+   */
+  slug: string;
+  /**
+   * Rumpun model, mis. GPT, Gemini, Claude.
+   */
+  family?: string | null;
+  description?: string | null;
+  modalities?: ('text' | 'image' | 'audio' | 'video' | 'code')[] | null;
+  /**
+   * Dalam token.
+   */
+  contextWindow?: number | null;
+  maxOutputTokens?: number | null;
+  isOpenWeights?: boolean | null;
+  releaseDate?: string | null;
+  knowledgeCutoff?: string | null;
+  /**
+   * Harga API per 1 juta token (opsional).
+   */
+  apiPricing?: {
+    inputPer1M?: number | null;
+    outputPer1M?: number | null;
+    currency?: ('USD' | 'IDR') | null;
+  };
+  tools?: {
+    docs?: (number | Tool)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  pros?: {
+    docs?: (number | Review)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  cons?: {
+    docs?: (number | Review)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tools".
+ */
+export interface Tool {
+  id: number;
+  name: string;
+  /**
+   * Satu kalimat deskripsi.
+   */
+  tagline?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  logo?: (number | null) | Media;
+  categories?: (number | Category)[] | null;
+  tags?: (number | Tag)[] | null;
+  website?: string | null;
+  docsUrl?: string | null;
+  repoUrl?: string | null;
+  platforms?: ('web' | 'desktop' | 'cli' | 'vscode' | 'jetbrains' | 'api')[] | null;
+  /**
+   * Model AI yang didukung tool ini.
+   */
+  models?: (number | Model)[] | null;
+  isOpenSource?: boolean | null;
+  releaseDate?: string | null;
+  hasFreeTier?: boolean | null;
+  pricingPlans?:
+    | {
+        name: string;
+        /**
+         * Kosongkan bila custom/enterprise.
+         */
+        price?: number | null;
+        currency?: ('USD' | 'IDR') | null;
+        billingPeriod?: ('month' | 'year' | 'once' | 'usage') | null;
+        features?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  pros?: {
+    docs?: (number | Review)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  cons?: {
+    docs?: (number | Review)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Otomatis dari nama, bisa diubah.
+   */
+  slug: string;
+  /**
+   * Skor keseluruhan 0–10 (penilaian admin).
+   */
+  overallScore?: number | null;
+  /**
+   * Kesimpulan singkat.
+   */
+  verdict?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: number;
+  /**
+   * Objek yang diulas (tool, perusahaan, dst.).
+   */
+  subject:
+    | {
+        relationTo: 'tools';
+        value: number | Tool;
+      }
+    | {
+        relationTo: 'models';
+        value: number | Model;
+      };
+  type: 'pros' | 'cons';
+  /**
+   * Ringkasan singkat satu kalimat.
+   */
+  title: string;
+  /**
+   * Penjelasan detail (opsional).
+   */
+  content?: string | null;
+  /**
+   * Seberapa berpengaruh poin ini bagi pengguna.
+   */
+  impact?: ('low' | 'medium' | 'high') | null;
+  order?: number | null;
+  /**
+   * Sumber/bukti (dokumentasi, benchmark, dll).
+   */
+  sourceUrl?: string | null;
+  verifiedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -306,6 +518,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'models';
+        value: number | Model;
+      } | null)
+    | ({
+        relationTo: 'tools';
+        value: number | Tool;
+      } | null)
+    | ({
+        relationTo: 'reviews';
+        value: number | Review;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -466,6 +694,105 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  parent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "models_select".
+ */
+export interface ModelsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  family?: T;
+  description?: T;
+  modalities?: T;
+  contextWindow?: T;
+  maxOutputTokens?: T;
+  isOpenWeights?: T;
+  releaseDate?: T;
+  knowledgeCutoff?: T;
+  apiPricing?:
+    | T
+    | {
+        inputPer1M?: T;
+        outputPer1M?: T;
+        currency?: T;
+      };
+  tools?: T;
+  pros?: T;
+  cons?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tools_select".
+ */
+export interface ToolsSelect<T extends boolean = true> {
+  name?: T;
+  tagline?: T;
+  description?: T;
+  logo?: T;
+  categories?: T;
+  tags?: T;
+  website?: T;
+  docsUrl?: T;
+  repoUrl?: T;
+  platforms?: T;
+  models?: T;
+  isOpenSource?: T;
+  releaseDate?: T;
+  hasFreeTier?: T;
+  pricingPlans?:
+    | T
+    | {
+        name?: T;
+        price?: T;
+        currency?: T;
+        billingPeriod?: T;
+        features?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  pros?: T;
+  cons?: T;
+  slug?: T;
+  overallScore?: T;
+  verdict?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  subject?: T;
+  type?: T;
+  title?: T;
+  content?: T;
+  impact?: T;
+  order?: T;
+  sourceUrl?: T;
+  verifiedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
