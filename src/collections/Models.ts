@@ -1,10 +1,27 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, CollectionAfterChangeHook } from 'payload'
+import { revalidatePath } from 'next/cache'
 import { isAdmin, publicRead } from './access'
 import { slugField } from '../fields/slug'
 import { reviewJoins } from '../fields/reviewable'
 
+const revalidateModel: CollectionAfterChangeHook = ({ doc, previousDoc }) => {
+  if (doc.slug) {
+    revalidatePath(`/models/${doc.slug}`)
+    revalidatePath('/models')
+  }
+
+  if (previousDoc?.slug && previousDoc.slug !== doc.slug) {
+    revalidatePath(`/models/${previousDoc.slug}`)
+  }
+
+  return doc
+}
+
 // Model AI (GPT, Gemini, Claude, dst.) yang dipakai oleh tools.
 export const Models: CollectionConfig = {
+  hooks: {
+    afterChange: [revalidateModel],
+  },
   slug: 'models',
   access: { read: publicRead, create: isAdmin, update: isAdmin, delete: isAdmin },
   admin: {

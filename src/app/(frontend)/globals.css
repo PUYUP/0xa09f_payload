@@ -101,6 +101,14 @@ a:hover {
   margin-bottom: 0.5rem;
 }
 
+.post-title a {
+  transition: color 0.2s;
+}
+
+.post-title a:hover {
+  color: var(--accent);
+}
+
 .post-excerpt {
   color: var(--muted);
   font-size: 1rem;
@@ -192,5 +200,85 @@ a:hover {
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
   color: var(--muted);
+}
+
+/* Grid layouts for catalog pages */
+.catalog-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* Tool/Model card styles */
+.tool-card,
+.model-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: var(--card-bg);
+  transition: border-color 0.2s;
+}
+
+.tool-card:hover,
+.model-card:hover {
+  border-color: var(--accent);
+}
+
+/* Review section styles */
+.review-section {
+  margin-bottom: 2rem;
+}
+
+.review-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--card-bg);
+  margin-bottom: 1rem;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.review-impact {
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  background: #6b7280;
+}
+
+.review-impact.high {
+  background: #10b981;
+}
+
+.review-impact.medium {
+  background: #f59e0b;
+}
+
+.review-impact.low {
+  background: #6b7280;
+}
+
+.review-content {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.review-source {
+  font-size: 0.875rem;
+  color: var(--accent);
+}
+
+.review-verified {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
 }
 

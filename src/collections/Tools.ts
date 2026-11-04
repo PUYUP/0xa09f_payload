@@ -1,9 +1,26 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, CollectionAfterChangeHook } from 'payload'
+import { revalidatePath } from 'next/cache'
 import { isAdmin, publishedOrAdmin } from './access'
 import { slugField } from '../fields/slug'
 import { reviewJoins } from '../fields/reviewable'
 
+const revalidateTool: CollectionAfterChangeHook = ({ doc, previousDoc }) => {
+  if (doc._status === 'published') {
+    revalidatePath(`/tools/${doc.slug}`)
+    revalidatePath('/tools')
+  }
+
+  if (previousDoc?.slug && previousDoc.slug !== doc.slug) {
+    revalidatePath(`/tools/${previousDoc.slug}`)
+  }
+
+  return doc
+}
+
 export const Tools: CollectionConfig = {
+  hooks: {
+    afterChange: [revalidateTool],
+  },
   slug: 'tools',
   access: { read: publishedOrAdmin, create: isAdmin, update: isAdmin, delete: isAdmin },
   versions: { drafts: true },

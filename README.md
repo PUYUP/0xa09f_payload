@@ -112,3 +112,13 @@ Buka di browser:
 - **GraphQL API / Playground**: [http://localhost:3000/api/graphql](http://localhost:3000/api/graphql)
 - **REST API**: [http://localhost:3000/api/posts](http://localhost:3000/api/posts)
 
+pg_dump postgresql://postgres.htzusxfihxfmsbearjrr:xxxxxxxxxxx@aws-0-eu-west-1.pooler.supabase.com:6543/postgres > backup.sql
+
+pg_dump postgresql://postgres:xxxxxxxxxxx@db.htzusxfihxfmsbearjrr.supabase.co:5432/postgres > backup.sql
+pg_dump --data-only --exclude-table=payload_migrations "postgresql://postgres.htzusxfihxfmsbearjrr:xxxxxxxxxxx@aws-0-eu-west-1.pooler.supabase.com:6543/postgres" > data.sql
+
+psql "postgresql://postgres.htzusxfihxfmsbearjrr:xxxxxxxxxxx@aws-0-eu-west-1.pooler.supabase.com:6543/postgres" -v ON_ERROR_STOP=1 < data.sql
+
+psql "postgresql://postgres.htzusxfihxfmsbearjrr:xxxxxxxxxxx@aws-0-eu-west-1.pooler.supabase.com:6543/postgres" -c "select count(*) from public.tools"
+
+psql "postgresql://postgres.htzusxfihxfmsbearjrr:xxxxxxxxxxx@aws-0-eu-west-1.pooler.supabase.com:6543/postgres" -v ON_ERROR_STOP=1 < data_public.sql

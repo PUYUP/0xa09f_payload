@@ -22,7 +22,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Image src={'/images/0xa09f-logo.png'} width={48} height={48} alt={'0xa09f-logo'} />
             </Link>
             <nav className="nav-links">
-              <Link href="/roundup">0XA09F</Link>
+              <Link href="/roundup">Roundup</Link>
+              <Link href="/tools">Tools</Link>
+              <Link href="/models">Models</Link>
               {/* <Link href="/admin" target="_blank" rel="noopener noreferrer">
                 Admin Panel ↗
               </Link> */}
