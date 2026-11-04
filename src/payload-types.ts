@@ -461,16 +461,38 @@ export interface Review {
   /**
    * One sentence summary.
    */
-  title: string;
+  title?: string | null;
   /**
    * Detailed explanation (optional).
    */
   content?: string | null;
   /**
+   * Penjelasan detail (opsional). Bisa sisipkan screenshot.
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
    * How impactful this point is for users.
    */
   impact?: ('low' | 'medium' | 'high') | null;
   order?: number | null;
+  /**
+   * Source of review, e.g. "WhatsApp Group AI Indonesia, 3 Nov 2026".
+   */
+  source?: string | null;
   /**
    * Source/evidence (documentation, benchmark, etc.).
    */
@@ -787,8 +809,10 @@ export interface ReviewsSelect<T extends boolean = true> {
   type?: T;
   title?: T;
   content?: T;
+  body?: T;
   impact?: T;
   order?: T;
+  source?: T;
   sourceUrl?: T;
   verifiedAt?: T;
   updatedAt?: T;
