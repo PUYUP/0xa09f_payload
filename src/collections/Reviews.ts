@@ -9,8 +9,8 @@ export const Reviews: CollectionConfig = {
   access: { read: publicRead, create: isAdmin, update: isAdmin, delete: isAdmin },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'subject', 'type', 'impact', 'order'],
-    listSearchableFields: ['title', 'content'],
+    defaultColumns: ['title', 'subject', 'reviewedVersion', 'type', 'impact', 'order'],
+    listSearchableFields: ['title', 'reviewedVersion', 'content'],
     group: 'Content',
   },
   defaultSort: 'order',
@@ -23,6 +23,17 @@ export const Reviews: CollectionConfig = {
       required: true,
       index: true,
       admin: { description: 'Object being reviewed (tool, company, etc.).' },
+    },
+    {
+      name: 'reviewedVersion',
+      type: 'text',
+      index: true,
+      label: 'Versi yang diulas',
+      admin: {
+        position: 'sidebar',
+        description:
+          'Versi model/tool saat review ini dibuat, mis. "GPT-5.1", "v2.3.1", atau "Nov 2026". Kosongkan jika berlaku umum.',
+      },
     },
     {
       name: 'type',

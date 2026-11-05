@@ -457,6 +457,10 @@ export interface Review {
         relationTo: 'models';
         value: number | Model;
       };
+  /**
+   * Versi model/tool saat review ini dibuat, mis. "GPT-5.1", "v2.3.1", atau "Nov 2026". Kosongkan jika berlaku umum.
+   */
+  reviewedVersion?: string | null;
   type: 'pros' | 'cons';
   /**
    * One sentence summary.
@@ -806,6 +810,7 @@ export interface ToolsSelect<T extends boolean = true> {
  */
 export interface ReviewsSelect<T extends boolean = true> {
   subject?: T;
+  reviewedVersion?: T;
   type?: T;
   title?: T;
   content?: T;
