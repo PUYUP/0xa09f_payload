@@ -1,5 +1,5 @@
 import type { CollectionConfig, CollectionAfterChangeHook } from 'payload'
-import { lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical'
+import { EXPERIMENTAL_TableFeature, lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical'
 import { revalidatePath } from 'next/cache'
 
 const revalidatePost: CollectionAfterChangeHook = ({ doc, previousDoc }) => {
@@ -109,6 +109,7 @@ export const Posts: CollectionConfig = {
         features: ({ defaultFeatures }) => [
           // buang upload bawaan supaya tidak dobel
           ...defaultFeatures.filter((f) => f.key !== 'upload'),
+          EXPERIMENTAL_TableFeature(),
           UploadFeature({
             collections: {
               media: {
