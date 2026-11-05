@@ -1,6 +1,7 @@
 import * as migration_20261104_011710_initial from './20261104_011710_initial';
 import * as migration_20261104_043706_add_review_body_and_source from './20261104_043706_add_review_body_and_source';
 import * as migration_20261105_005835_add_reviewed_version from './20261105_005835_add_reviewed_version';
+import * as migration_20261105_010644_add__objectkey_media from './20261105_010644_add__objectkey_media';
 
 export const migrations = [
   {
@@ -16,6 +17,11 @@ export const migrations = [
   {
     up: migration_20261105_005835_add_reviewed_version.up,
     down: migration_20261105_005835_add_reviewed_version.down,
-    name: '20261105_005835_add_reviewed_version'
+    name: '20261105_005835_add_reviewed_version',
+  },
+  {
+    up: migration_20261105_010644_add__objectkey_media.up,
+    down: migration_20261105_010644_add__objectkey_media.down,
+    name: '20261105_010644_add__objectkey_media'
   },
 ];
