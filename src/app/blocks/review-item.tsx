@@ -36,11 +36,14 @@ export default function ReviewItem({ review }: { review: any }) {
   return (
     <li className="review-card">
       <div className="review-header">
+        <div className="block">
+          <span className={`review-impact ${review.impact}`}>{review.impact}</span>
+          {review.reviewedVersion && (
+            <span className="tag-badge">{review.reviewedVersion}</span>
+          )}
+        </div>
+
         <strong style={{ fontSize: '1rem' }}>{review.title}</strong>
-        <span className={`review-impact ${review.impact}`}>{review.impact}</span>
-        {review.reviewedVersion && (
-          <span className="tag-badge">{review.reviewedVersion}</span>
-        )}
       </div>
 
       {review.body ? (
