@@ -6,6 +6,7 @@ const sizeToWidth: Record<string, number> = { small: 400, medium: 768, large: 12
 const jsxConverters: JSXConvertersFunction<DefaultNodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   upload: ({ node }: { node: SerializedUploadNode }) => {
+    console.log(node);
     const media: any = node.value
     if (!media || typeof media !== 'object' || !media.url) return null
 

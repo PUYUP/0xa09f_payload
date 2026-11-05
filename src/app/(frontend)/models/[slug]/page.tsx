@@ -30,12 +30,28 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
   const { docs: models } = await payload.find({
     collection: 'models',
     where: { slug: { equals: slug } },
-    depth: 3,
+    depth: 1,
     limit: 1,
   })
 
   const model = models[0]
   if (!model) notFound()
+
+  const { docs: reviews } = await payload.find({
+    collection: 'reviews',
+    depth: 2, // memastikan node upload di body terisi objek media
+    limit: 100,
+    sort: 'order',
+    where: {
+      and: [
+        { 'subject.relationTo': { equals: 'models' } },
+        { 'subject.value': { equals: model.id } },
+      ],
+    },
+  })
+
+  const pros = reviews.filter((r) => r.type === 'pros')
+  const cons = reviews.filter((r) => r.type === 'cons')
 
   const modalities = Array.isArray(model.modalities) ? model.modalities : []
   const tools = Array.isArray(model.tools) ? model.tools : []
@@ -201,33 +217,33 @@ export default async function ModelDetailPage({ params }: { params: Promise<{ sl
       <div className="review-section">
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Reviews</h2>
 
-        {model.pros && Array.isArray(model.pros.docs) && model.pros.docs.length > 0 && (
+        {pros && Array.isArray(pros) && pros.length > 0 && (
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#10b981' }}>
               Pros (Strengths)
             </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {model.pros.docs.map((review: any) => (
+              {pros.map((review: any) => (
                 <ReviewItem key={review.id} review={review} />
               ))}
             </ul>
           </div>
         )}
 
-        {model.cons && Array.isArray(model.cons.docs) && model.cons.docs.length > 0 && (
+        {cons && Array.isArray(cons) && cons.length > 0 && (
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#ef4444' }}>
               Cons (Weaknesses)
             </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {model.cons.docs.map((review: any) => (
+              {cons.map((review: any) => (
                 <ReviewItem key={review.id} review={review} />
               ))}
             </ul>
           </div>
         )}
 
-        {(!model.pros?.docs?.length || model.pros.docs.length === 0) && (!model.cons?.docs?.length || model.cons.docs.length === 0) && (
+        {(!pros?.length || pros.length === 0) && (!cons?.length || cons.length === 0) && (
           <p style={{ color: 'var(--muted)' }}>No reviews yet.</p>
         )}
       </div>

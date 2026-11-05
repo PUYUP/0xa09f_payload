@@ -41,12 +41,28 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
         { _status: { equals: 'published' } },
       ],
     },
-    depth: 3,
+    depth: 1,
     limit: 1,
   })
 
   const tool = tools[0]
   if (!tool) notFound()
+
+  const { docs: reviews } = await payload.find({
+    collection: 'reviews',
+    depth: 2, // memastikan node upload di body terisi objek media
+    limit: 100,
+    sort: 'order',
+    where: {
+      and: [
+        { 'subject.relationTo': { equals: 'tools' } },
+        { 'subject.value': { equals: tool.id } },
+      ],
+    },
+  })
+
+  const pros = reviews.filter((r) => r.type === 'pros')
+  const cons = reviews.filter((r) => r.type === 'cons')
 
   const categories = Array.isArray(tool.categories) ? tool.categories : []
   const tags = Array.isArray(tool.tags) ? tool.tags : []
@@ -230,15 +246,15 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
         </div>
       )}
 
-      {tool.pros && Array.isArray(tool.pros.docs) && tool.pros.docs.length > 0 && (
+      {pros && Array.isArray(pros) && pros.length > 0 && (
         <div style={{ marginBottom: '1rem' }}>
           <div className="meta-row">
             <span>
-              <strong>{tool.pros.docs.length}</strong> pros
+              <strong>{pros.length}</strong> pros
             </span>
-            {tool.cons && Array.isArray(tool.cons.docs) && tool.cons.docs.length > 0 && (
+            {cons && Array.isArray(cons) && cons.length > 0 && (
               <span>
-                <strong>{tool.cons.docs.length}</strong> cons
+                <strong>{cons.length}</strong> cons
               </span>
             )}
           </div>
@@ -263,33 +279,33 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
       <div className="review-section">
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Reviews</h2>
 
-        {tool.pros && Array.isArray(tool.pros.docs) && tool.pros.docs.length > 0 && (
+        {pros && Array.isArray(pros) && pros.length > 0 && (
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#10b981' }}>
               Pros (Strengths)
             </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {tool.pros.docs.map((review: any) => (
+              {pros.map((review: any) => (
                 <ReviewItem key={review.id} review={review} />
               ))}
             </ul>
           </div>
         )}
 
-        {tool.cons && Array.isArray(tool.cons.docs) && tool.cons.docs.length > 0 && (
+        {cons && Array.isArray(cons) && cons.length > 0 && (
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: '#ef4444' }}>
               Cons (Weaknesses)
             </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {tool.cons.docs.map((review: any) => (
+              {cons.map((review: any) => (
                 <ReviewItem key={review.id} review={review} />
               ))}
             </ul>
           </div>
         )}
 
-        {(!tool.pros?.docs?.length || tool.pros.docs.length === 0) && (!tool.cons?.docs?.length || tool.cons.docs.length === 0) && (
+        {(!pros?.length || pros.length === 0) && (!cons?.length || cons.length === 0) && (
           <p style={{ color: 'var(--muted)' }}>No reviews yet.</p>
         )}
       </div>
