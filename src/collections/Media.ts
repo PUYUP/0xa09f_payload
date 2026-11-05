@@ -20,6 +20,5 @@ export const Media: CollectionConfig = {
   fields: [
     { name: 'alt', type: 'text', label: 'Alt Text', required: true },
     { name: 'caption', type: 'text', label: 'Caption' },
-    { name: '_objectkey', type: 'text', admin: { readOnly: true, position: 'sidebar' } },
   ],
 }
