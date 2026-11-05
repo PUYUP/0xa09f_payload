@@ -2,76 +2,49 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getPayloadClient } from '@/lib/payload'
 import { Category, Tag } from '@/payload-types'
+import { EMPTY_STATS, getReviewStatsBySubject } from '@/lib/review-stats'
 
 export const metadata: Metadata = {
   title: 'AI Tools Reviews - Community Reviews & Ratings',
 }
 
-interface ReviewStats {
-  count: number
-  averageScore: number
-  latestReviewedAt: string | null
-}
-
-async function getReviewStats(payload: any, toolId: string | number): Promise<ReviewStats> {
-  try {
-    const { docs: reviews, totalDocs } = await payload.find({
-      collection: 'reviews',
-      where: {
-        and: [
-          { 'subject.relationTo': { equals: 'tools' } },
-          { 'subject.value': { equals: toolId } },
-        ],
-      },
-      pagination: false, // ambil semua, tidak dibatasi 100
-      depth: 0,
-    })
-
-    if (totalDocs === 0) {
-      return { count: 0, averageScore: 0, latestReviewedAt: null }
-    }
-
-    const impactScores: Record<string, number> = { low: 1, medium: 2, high: 3 }
-    const totalScore = reviews.reduce(
-      (sum: number, review: any) => sum + (impactScores[review.impact] || 0),
-      0,
-    )
-
-    const latestReviewedAt =
-      reviews
-        .map((r: any) => r.verifiedAt || r.createdAt)
-        .filter(Boolean)
-        .sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime())[0] || null
-
-    return {
-      count: totalDocs,
-      averageScore: totalScore / reviews.length,
-      latestReviewedAt,
-    }
-  } catch (error) {
-    console.error('Error fetching review stats:', error)
-    return { count: 0, averageScore: 0, latestReviewedAt: null }
-  }
-}
-
 export default async function ToolsPage() {
   const payload = await getPayloadClient()
 
-  const { docs: tools } = await payload.find({
-    collection: 'tools',
-    where: {
-      _status: { equals: 'published' },
-    },
-    sort: '-createdAt',
-    depth: 1,
-  })
+  const [{ docs: tools }, statsByTool] = await Promise.all([
+    payload.find({
+      collection: 'tools',
+      where: {
+        _status: { equals: 'published' },
+      },
+      sort: '-createdAt',
+      depth: 1,
+      pagination: false,
+    }),
+    getReviewStatsBySubject(payload, 'tools'),
+  ])
 
-  const toolsWithStats = await Promise.all(
-    tools.map(async (tool) => ({
+  const toolsWithStats = tools
+    .map((tool) => ({
       ...tool,
-      reviewStats: await getReviewStats(payload, tool.id),
+      reviewStats: statsByTool.get(tool.id) ?? EMPTY_STATS,
     }))
-  )
+    .sort((a, b) => {
+      const aAdded = a.reviewStats.latestAddedAt
+      const bAdded = b.reviewStats.latestAddedAt
+
+      // Tool dengan review selalu di atas tool tanpa review
+      if (aAdded && !bAdded) return -1
+      if (!aAdded && bAdded) return 1
+
+      // Sama-sama punya review: review terbaru di atas
+      if (aAdded && bAdded) {
+        return new Date(bAdded).getTime() - new Date(aAdded).getTime()
+      }
+
+      // Sama-sama belum punya review: urut createdAt terbaru
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    })
 
   return (
     <main>
@@ -80,9 +53,7 @@ export default async function ToolsPage() {
       </h1>
 
       {toolsWithStats.length === 0 && (
-        <p style={{ color: 'var(--muted)' }}>
-          No tools have been published yet.
-        </p>
+        <p style={{ color: 'var(--muted)' }}>No tools have been published yet.</p>
       )}
 
       <ul className="post-list">
@@ -151,12 +122,18 @@ export default async function ToolsPage() {
                       <span>
                         <strong>{tool.reviewStats.count}</strong> reviews
                       </span>
+                      <span style={{ color: '#10b981' }}>
+                        <strong>{tool.reviewStats.prosCount}</strong> pros
+                      </span>
+                      <span style={{ color: '#ef4444' }}>
+                        <strong>{tool.reviewStats.consCount}</strong> cons
+                      </span>
                       <span>
                         Avg: <strong>{tool.reviewStats.averageScore.toFixed(1)}/3</strong>
                       </span>
                       {tool.reviewStats.latestReviewedAt && (
                         <span>
-                          Latest: {new Date(tool.reviewStats.latestReviewedAt).toLocaleDateString('en-US')}
+                          Latest reviewed: {new Date(tool.reviewStats.latestReviewedAt).toLocaleDateString('en-US')}
                         </span>
                       )}
                     </div>

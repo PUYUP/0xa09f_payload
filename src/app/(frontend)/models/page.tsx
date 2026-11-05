@@ -1,73 +1,46 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getPayloadClient } from '@/lib/payload'
+import { EMPTY_STATS, getReviewStatsBySubject } from '@/lib/review-stats'
 
 export const metadata: Metadata = {
   title: 'AI Models Reviews - Community Ratings & Feedback',
 }
 
-interface ReviewStats {
-  count: number
-  averageScore: number
-  latestReviewedAt: string | null
-}
-
-async function getReviewStats(payload: any, modelId: string | number): Promise<ReviewStats> {
-  try {
-    const { docs: reviews, totalDocs } = await payload.find({
-      collection: 'reviews',
-      where: {
-        and: [
-          { 'subject.relationTo': { equals: 'models' } },
-          { 'subject.value': { equals: modelId } },
-        ],
-      },
-      pagination: false, // ambil semua, tidak dibatasi 100
-      depth: 0,
-    })
-
-    if (totalDocs === 0) {
-      return { count: 0, averageScore: 0, latestReviewedAt: null }
-    }
-
-    const impactScores: Record<string, number> = { low: 1, medium: 2, high: 3 }
-    const totalScore = reviews.reduce(
-      (sum: number, review: any) => sum + (impactScores[review.impact] || 0),
-      0,
-    )
-
-    const latestReviewedAt =
-      reviews
-        .map((r: any) => r.verifiedAt || r.createdAt)
-        .filter(Boolean)
-        .sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime())[0] || null
-
-    return {
-      count: totalDocs,
-      averageScore: totalScore / reviews.length,
-      latestReviewedAt,
-    }
-  } catch (error) {
-    console.error('Error fetching review stats:', error)
-    return { count: 0, averageScore: 0, latestReviewedAt: null }
-  }
-}
-
 export default async function ModelsPage() {
   const payload = await getPayloadClient()
 
-  const { docs: models } = await payload.find({
-    collection: 'models',
-    sort: '-releaseDate',
-    depth: 1,
-  })
+  const [{ docs: models }, statsByModel] = await Promise.all([
+    payload.find({
+      collection: 'models',
+      sort: '-releaseDate',
+      depth: 1,
+      pagination: false,
+    }),
+    getReviewStatsBySubject(payload, 'models'),
+  ])
 
-  const modelsWithStats = await Promise.all(
-    models.map(async (model) => ({
+  const modelsWithStats = models
+    .map((model) => ({
       ...model,
-      reviewStats: await getReviewStats(payload, model.id),
+      reviewStats: statsByModel.get(model.id) ?? EMPTY_STATS,
     }))
-  )
+    .sort((a, b) => {
+      const aAdded = a.reviewStats.latestAddedAt
+      const bAdded = b.reviewStats.latestAddedAt
+
+      // Model dengan review selalu di atas model tanpa review
+      if (aAdded && !bAdded) return -1
+      if (!aAdded && bAdded) return 1
+
+      // Sama-sama punya review: review terbaru di atas
+      if (aAdded && bAdded) {
+        return new Date(bAdded).getTime() - new Date(aAdded).getTime()
+      }
+
+      // Sama-sama belum punya review: urut releaseDate terbaru
+      return new Date(b.releaseDate ?? 0).getTime() - new Date(a.releaseDate ?? 0).getTime()
+    })
 
   return (
     <main>
@@ -76,9 +49,7 @@ export default async function ModelsPage() {
       </h1>
 
       {modelsWithStats.length === 0 && (
-        <p style={{ color: 'var(--muted)' }}>
-          No models have been added yet.
-        </p>
+        <p style={{ color: 'var(--muted)' }}>No models have been added yet.</p>
       )}
 
       <ul className="post-list">
@@ -115,9 +86,7 @@ export default async function ModelsPage() {
                 )}
 
                 {model.contextWindow && (
-                  <span className="tag-badge">
-                    {model.contextWindow.toLocaleString()} tokens
-                  </span>
+                  <span className="tag-badge">{model.contextWindow.toLocaleString()} tokens</span>
                 )}
 
                 {model.releaseDate && (
@@ -136,12 +105,18 @@ export default async function ModelsPage() {
                   <span>
                     <strong>{model.reviewStats.count}</strong> reviews
                   </span>
+                  <span style={{ color: '#10b981' }}>
+                    <strong>{model.reviewStats.prosCount}</strong> pros
+                  </span>
+                  <span style={{ color: '#ef4444' }}>
+                    <strong>{model.reviewStats.consCount}</strong> cons
+                  </span>
                   <span>
                     Avg: <strong>{model.reviewStats.averageScore.toFixed(1)}/3</strong>
                   </span>
                   {model.reviewStats.latestReviewedAt && (
                     <span>
-                      Latest: {new Date(model.reviewStats.latestReviewedAt).toLocaleDateString('en-US')}
+                      Latest reviewed: {new Date(model.reviewStats.latestReviewedAt).toLocaleDateString('en-US')}
                     </span>
                   )}
                 </div>
