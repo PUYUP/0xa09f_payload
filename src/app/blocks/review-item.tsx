@@ -39,7 +39,7 @@ export default function ReviewItem({ review }: { review: any }) {
         <div className="block">
           <span className={`review-impact ${review.impact}`}>{review.impact}</span>
           {review.reviewedVersion && (
-            <span className="tag-badge">{review.reviewedVersion}</span>
+            <span className="tag-badge" style={{ marginLeft: '10px' }}>{review.reviewedVersion}</span>
           )}
         </div>
 
