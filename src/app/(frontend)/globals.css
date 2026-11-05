@@ -268,7 +268,7 @@ a:hover {
 
 .review-content {
   font-size: 0.95rem;
-  color: var(--muted);
+  color: var(--fg);
   margin-bottom: 0.5rem;
 }
 
