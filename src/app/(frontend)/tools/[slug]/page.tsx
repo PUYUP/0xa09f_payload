@@ -4,42 +4,7 @@ import { notFound } from 'next/navigation'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { getPayloadClient } from '@/lib/payload'
 import { Category, Tag, Model } from '@/payload-types'
-
-function ReviewItem({ review }: { review: any }) {
-  return (
-    <li className="review-card">
-      <div className="review-header">
-        <strong style={{ fontSize: '1rem' }}>{review.title}</strong>
-        <span className={`review-impact ${review.impact}`}>{review.impact}</span>
-      </div>
-
-      {review.body ? (
-        <div className="review-content">
-          <RichText data={review.body} />
-        </div>
-      ) : review.content ? (
-        <p className="review-content">{review.content}</p>
-      ) : null}
-
-      {review.source && <div className="review-source">Source: {review.source}</div>}
-      {review.sourceUrl && (
-        <a
-          href={review.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="review-source"
-        >
-          Link →
-        </a>
-      )}
-      {review.verifiedAt && (
-        <div className="review-verified">
-          Verified: {new Date(review.verifiedAt).toLocaleDateString('en-US')}
-        </div>
-      )}
-    </li>
-  )
-}
+import ReviewItem from '@/app/blocks/review-item'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
