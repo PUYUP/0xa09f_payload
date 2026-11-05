@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="container">
           <header className="header">
             <Link href="/roundup" className="brand">
-              <Image src={'/images/0xa09f-logo.png'} width={48} height={48} alt={'0xa09f-logo'} />
+              <Image src={'/images/0xa09f-logo.png'} width={68} height={68} alt={'0xa09f-logo'} />
             </Link>
             <nav className="nav-links">
               <Link href="/roundup">📰 Roundup</Link>
