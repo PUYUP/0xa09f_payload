@@ -7,6 +7,13 @@ type Props = {
   params: Promise<{ tagSlug: string }>
 }
 
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { tagSlug } = await params
   const payload = await getPayloadClient()
@@ -45,7 +52,7 @@ export default async function TagPage({ params }: Props) {
         { tags: { contains: tag.id } },
       ],
     },
-    sort: '-publishedAt',
+    sort: '-updatedAt',
     depth: 1,
   })
 
@@ -70,25 +77,35 @@ export default async function TagPage({ params }: Props) {
       )}
 
       <ul className="post-list">
-        {posts.map((post) => (
-          <li key={post.id} className="post-card">
-            <Link href={`/roundup/${post.slug}`}>
-              <h2 className="post-title">{post.title}</h2>
-            </Link>
-            {post.excerpt && <p className="post-excerpt">{post.excerpt}</p>}
-            {post.publishedAt && (
+        {posts.map((post) => {
+          const showUpdated =
+            post.updatedAt &&
+            (!post.publishedAt ||
+              formatDate(post.updatedAt) !== formatDate(post.publishedAt))
+
+          return (
+            <li key={post.id} className="post-card">
+              <Link href={`/roundup/${post.slug}`}>
+                <h2 className="post-title">{post.title}</h2>
+              </Link>
+              {post.excerpt && <p className="post-excerpt">{post.excerpt}</p>}
+
               <div className="meta-row">
-                <time dateTime={post.publishedAt}>
-                  {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
+                {post.publishedAt && (
+                  <time dateTime={post.publishedAt}>
+                    {formatDate(post.publishedAt)}
+                  </time>
+                )}
+
+                {showUpdated && (
+                  <time dateTime={post.updatedAt} style={{ color: 'var(--muted)' }}>
+                    Updated {formatDate(post.updatedAt)}
+                  </time>
+                )}
               </div>
-            )}
-          </li>
-        ))}
+            </li>
+          )
+        })}
       </ul>
     </main>
   )

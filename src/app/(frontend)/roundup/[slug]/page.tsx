@@ -12,6 +12,13 @@ type Props = {
 
 const widths = { small: 400, medium: 768, large: 1280, full: 1280 } as const
 
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+
 const jsxConverters: JSXConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
   upload: ({ node }) => {
@@ -56,7 +63,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: metaTitle,
     description: metaDesc,
-    openGraph: { locale: post.language === 'id' ? 'id_ID' : 'en_US' }
+    openGraph: {
+      locale: post.language === 'id' ? 'id_ID' : 'en_US',
+      type: 'article',
+      publishedTime: post.publishedAt ?? undefined,
+      modifiedTime: post.updatedAt,
+    },
   }
 }
 
@@ -92,6 +104,11 @@ export default async function PostPage({ params }: Props) {
   const tags = Array.isArray(post.tags) ? post.tags : []
   const author = typeof post.author === 'object' && post.author !== null ? post.author : null
 
+  const showUpdated =
+    post.updatedAt &&
+    (!post.publishedAt ||
+      formatDate(post.updatedAt) !== formatDate(post.publishedAt))
+
   return (
     <main>
       <Link href="/roundup" className="back-link">
@@ -116,11 +133,13 @@ export default async function PostPage({ params }: Props) {
 
             {post.publishedAt && (
               <time dateTime={post.publishedAt}>
-                {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {formatDate(post.publishedAt)}
+              </time>
+            )}
+
+            {showUpdated && (
+              <time dateTime={post.updatedAt} style={{ color: 'var(--muted)' }}>
+                Updated {formatDate(post.updatedAt)}
               </time>
             )}
 

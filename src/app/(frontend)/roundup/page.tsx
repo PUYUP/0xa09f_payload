@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   description: "Weekly AI news, curated from the community. Discover the latest in AI models, tools, and insights.",
 }
 
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+
 export default async function RoundupPage() {
   const payload = await getPayloadClient()
 
@@ -40,6 +47,11 @@ export default async function RoundupPage() {
         {posts.map((post) => {
           const tags = Array.isArray(post.tags) ? post.tags : []
 
+          const showUpdated =
+            post.updatedAt &&
+            (!post.publishedAt ||
+              formatDate(post.updatedAt) !== formatDate(post.publishedAt))
+
           return (
             <li key={post.id} className="post-card">
               <Link href={`/roundup/${post.slug}`}>
@@ -51,11 +63,13 @@ export default async function RoundupPage() {
               <div className="meta-row">
                 {post.publishedAt && (
                   <time dateTime={post.publishedAt}>
-                    {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+                    {formatDate(post.publishedAt)}
+                  </time>
+                )}
+
+                {showUpdated && (
+                  <time dateTime={post.updatedAt} style={{ color: 'var(--muted)' }}>
+                    Updated {formatDate(post.updatedAt)}
                   </time>
                 )}
 
