@@ -5,4 +5,5 @@ node_modules/
 .open-next/
 dist/
 *.tsbuildinfo
+media/
 public/media/
