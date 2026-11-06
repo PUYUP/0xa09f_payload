@@ -16,7 +16,7 @@ export default async function RoundupPage() {
     where: {
       status: { equals: 'published' },
     },
-    sort: '-publishedAt',
+    sort: '-updatedAt',
     depth: 1,
   })
 
